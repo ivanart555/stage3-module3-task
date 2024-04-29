@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':module-repository')
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+    implementation 'jakarta.el:jakarta.el-api:6.0.0-RC1'
+}
