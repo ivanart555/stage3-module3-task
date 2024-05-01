@@ -42,7 +42,7 @@ public class NewsRepositoryImpl implements BaseRepository<NewsModel, Long> {
 
         news.setTitle(entity.getTitle());
         news.setContent(entity.getContent());
-        news.setAuthorId(entity.getAuthorId());
+        news.setAuthor(entity.getAuthor());
         news.setLastUpdateDate(entity.getLastUpdateDate());
 
         return news;

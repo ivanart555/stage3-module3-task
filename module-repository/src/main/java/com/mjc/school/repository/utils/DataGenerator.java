@@ -30,7 +30,7 @@ public class DataGenerator {
         for (int i = 1; i < NEWS_COUNT_TO_GENERATE + 1; i++) {
             NewsModel news = new NewsModel();
             news.setId((long) i);
-            news.setAuthorId((long) random.nextInt(1, authors.size()));
+            news.setAuthor(authors.get(random.nextInt(1, authors.size())));
             news.setTitle(getRandomLine(titlesLines));
             news.setContent(getRandomLine(contentLines));
             news.setCreateDate(generateRandomLocalDateTime());

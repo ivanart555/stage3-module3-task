@@ -20,6 +20,9 @@ subprojects {
 
     dependencies {
         implementation "org.springframework.boot:spring-boot-starter-data-jpa:2.7.7"
+        implementation 'javax.validation:validation-api:2.0.1.Final'
+
+        implementation 'com.h2database:h2:2.2.224'
 
         testImplementation "org.springframework:spring-test:$springVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
@@ -32,6 +35,10 @@ subprojects {
 
         implementation 'org.aspectj:aspectjrt:1.9.22'
         implementation 'org.aspectj:aspectjweaver:1.9.22'
+
+        implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+        implementation group: 'javax.persistence', name: 'javax.persistence-api', version: "$javaxVersion"
+        implementation group: 'javax.xml.bind', name: 'jaxb-api', version: "$jaxbApiVersion"
     }
     test {
         useJUnitPlatform()

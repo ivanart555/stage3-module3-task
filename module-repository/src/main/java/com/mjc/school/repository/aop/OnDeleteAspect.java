@@ -22,7 +22,7 @@ public class OnDeleteAspect {
 
     @After(value = "deleteByIdCall(authorId)", argNames = "authorId")
     public void afterDeleteAuthor(Long authorId) {
-        newsRepository.readAll().removeIf(x -> x.getAuthorId().equals(authorId));
+        newsRepository.readAll().removeIf(x -> x.getAuthor().getId().equals(authorId));
     }
 
 
