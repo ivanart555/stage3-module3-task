@@ -3,8 +3,6 @@ package com.mjc.school.repository.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -26,6 +24,7 @@ public class NewsModel implements BaseEntity<Long> {
     private LocalDateTime createDate;
     @LastModifiedDate
     private LocalDateTime lastUpdateDate;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "AUTHOR_ID")
     private AuthorModel author;
 }

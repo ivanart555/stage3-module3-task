@@ -5,6 +5,8 @@ import com.mjc.school.repository.datasource.Datasource;
 import com.mjc.school.repository.model.NewsModel;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,8 @@ import java.util.Optional;
 @Repository
 public class NewsRepositoryImpl implements BaseRepository<NewsModel, Long> {
     private final Datasource datasource;
+    @PersistenceContext
+    private EntityManager em;
 
     public NewsRepositoryImpl(Datasource datasource) {
         this.datasource = datasource;
@@ -31,8 +35,10 @@ public class NewsRepositoryImpl implements BaseRepository<NewsModel, Long> {
 
     @Override
     public NewsModel create(NewsModel entity) {
-        entity.setId(getNextId());
-        datasource.getNews().add(entity);
+//        entity.setId(getNextId());
+//        datasource.getNews().add(entity);
+//        return entity;
+        em.persist(entity);
         return entity;
     }
 

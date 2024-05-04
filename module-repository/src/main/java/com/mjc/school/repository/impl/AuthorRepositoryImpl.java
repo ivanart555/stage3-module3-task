@@ -2,68 +2,61 @@ package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.BaseRepository;
 import com.mjc.school.repository.aop.OnDelete;
-import com.mjc.school.repository.datasource.Datasource;
 import com.mjc.school.repository.model.AuthorModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class AuthorRepositoryImpl implements BaseRepository<AuthorModel, Long> {
-    private final Datasource datasource;
-
-    public AuthorRepositoryImpl(Datasource datasource) {
-        this.datasource = datasource;
-    }
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public List<AuthorModel> readAll() {
-        return datasource.getAuthors();
+        TypedQuery<AuthorModel> query = em.createQuery("select a from AuthorModel a", AuthorModel.class);
+        return query.getResultList();
     }
 
     @Override
     public Optional<AuthorModel> readById(Long authorId) {
-        return datasource.getAuthors().stream().filter(author -> authorId.equals(author.getId())).findFirst();
+        return Optional.ofNullable(em.find(AuthorModel.class, authorId));
     }
 
+    @Transactional
     @Override
     public AuthorModel create(AuthorModel entity) {
-        entity.setId(getNextId());
-        datasource.getAuthors().add(entity);
+        em.persist(entity);
         return entity;
     }
 
+    @Transactional
     @Override
     public AuthorModel update(AuthorModel entity) {
-        AuthorModel author = readById(entity.getId()).orElseThrow();
-
+        AuthorModel author = em.find(AuthorModel.class, entity.getId());
         author.setName(entity.getName());
-        author.setLastUpdateDate(entity.getLastUpdateDate());
-
+        em.merge(author);
         return author;
     }
 
+    @Transactional
     @Override
     @OnDelete
     public boolean deleteById(Long authorId) {
-        List<AuthorModel> deleteList = new ArrayList<>();
-        deleteList.add(this.readById(authorId).orElseThrow());
-        return datasource.getAuthors().removeAll(deleteList);
+        if (existById(authorId)) {
+            em.remove(em.find(AuthorModel.class, authorId));
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean existById(Long authorId) {
-        return datasource.getAuthors().stream().anyMatch(author -> authorId.equals(author.getId()));
-    }
-
-    private synchronized Long getNextId() {
-        long maxId = datasource.getAuthors().stream()
-                .mapToLong(AuthorModel::getId)
-                .max()
-                .orElse(0L);
-
-        return maxId + 1;
+        return readById(authorId).isPresent();
     }
 }

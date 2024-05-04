@@ -49,7 +49,7 @@ public class DataGenerator {
         List<String> authorsLines = ContentReader.getFileContent(AUTHORS_FILENAME);
         long counter = 1L;
         for (String element : authorsLines) {
-            authors.add(new AuthorModel(counter, element, generateRandomLocalDateTime(), LocalDateTime.now()));
+            authors.add(new AuthorModel(counter, element, generateRandomLocalDateTime(), LocalDateTime.now(), null));
             counter++;
         }
 

@@ -5,16 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "author")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "AUTHOR")
 public class AuthorModel implements BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -24,4 +26,6 @@ public class AuthorModel implements BaseEntity<Long> {
     private LocalDateTime createDate;
     @LastModifiedDate
     private LocalDateTime lastUpdateDate;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
+    private List<NewsModel> news;
 }

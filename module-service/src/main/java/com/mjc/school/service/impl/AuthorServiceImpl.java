@@ -10,15 +10,10 @@ import com.mjc.school.service.exception.ServiceException;
 import com.mjc.school.service.mapper.ModelMapper;
 import com.mjc.school.service.validator.ValidatorInstance;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.ValidationException;
-import jakarta.validation.Validator;
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -56,9 +51,6 @@ public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDt
     public AuthorDtoResponse create(AuthorDtoRequest createRequest) {
         validate(createRequest);
         AuthorModel author = mapper.authorDtoToModel(createRequest);
-        LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        author.setCreateDate(date);
-        author.setLastUpdateDate(date);
         AuthorModel createdAuthor = authorRepository.create(author);
         return mapper.authorModelToDto(createdAuthor);
     }
@@ -68,8 +60,6 @@ public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDt
         validate(updateRequest);
         if (authorRepository.existById(updateRequest.id())) {
             AuthorModel author = mapper.authorDtoToModel(updateRequest);
-            LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-            author.setLastUpdateDate(date);
             AuthorModel updatedAuthor = authorRepository.update(author);
             return mapper.authorModelToDto(updatedAuthor);
         } else {
