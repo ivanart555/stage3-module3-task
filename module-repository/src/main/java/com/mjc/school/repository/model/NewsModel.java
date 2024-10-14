@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "news")
 public class NewsModel implements BaseEntity<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String content;

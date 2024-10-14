@@ -2,6 +2,7 @@ package com.mjc.school.service.impl;
 
 
 import com.mjc.school.repository.BaseRepository;
+import com.mjc.school.repository.model.AuthorModel;
 import com.mjc.school.repository.model.NewsModel;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.NewsDtoRequest;
@@ -27,12 +28,15 @@ import static com.mjc.school.service.exception.ServiceErrorCode.NEWS_ID_DOES_NOT
 public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoResponse, Long> {
     private static final Logger LOGGER = Logger.getLogger(NewsServiceImpl.class.getName());
     private final BaseRepository<NewsModel, Long> newsRepository;
-    private final ValidatorInstance Validator;
+    private final BaseRepository<AuthorModel, Long> authorRepository;
+    private final ValidatorInstance validator;
     private final ModelMapper mapper = Mappers.getMapper(ModelMapper.class);
 
-    public NewsServiceImpl(BaseRepository<NewsModel, Long> newsRepository, ValidatorInstance Validator) {
+    public NewsServiceImpl(BaseRepository<NewsModel, Long> newsRepository,
+                           BaseRepository<AuthorModel, Long> authorRepository, ValidatorInstance validator) {
         this.newsRepository = newsRepository;
-        this.Validator = Validator;
+        this.authorRepository = authorRepository;
+        this.validator = validator;
     }
 
     @Override
@@ -52,7 +56,13 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
     @Override
     public NewsDtoResponse create(NewsDtoRequest createRequest) {
         validate(createRequest);
+
+        AuthorModel author = authorRepository.readById(createRequest.authorId())
+                .orElseThrow(() -> new ServiceException("Author not found"));
+
         NewsModel news = mapper.newsDtoToModel(createRequest);
+
+        news.setAuthor(author);
         LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         news.setCreateDate(date);
         news.setLastUpdateDate(date);
@@ -85,7 +95,7 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
     }
 
     private void validate(NewsDtoRequest newsDto) throws ValidationException {
-        Set<ConstraintViolation<NewsDtoRequest>> violations = Validator.getVALIDATOR().validate(newsDto);
+        Set<ConstraintViolation<NewsDtoRequest>> violations = validator.getVALIDATOR().validate(newsDto);
         if (!violations.isEmpty()) {
             for (ConstraintViolation<NewsDtoRequest> violation : violations) {
                 LOGGER.warning("News " + violation.getPropertyPath() + ": " + violation.getMessage());

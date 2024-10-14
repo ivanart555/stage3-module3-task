@@ -7,12 +7,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ValidatorInstance {
-    private final Validator VALIDATOR =
-            Validation.byDefaultProvider()
-                    .configure()
-                    .messageInterpolator(new ParameterMessageInterpolator())
-                    .buildValidatorFactory()
-                    .getValidator();
+    private static final Validator VALIDATOR;
+
+    static {
+        try (var factory = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(new ParameterMessageInterpolator())
+                .buildValidatorFactory()) {
+            VALIDATOR = factory.getValidator();
+        }
+    }
 
     public Validator getVALIDATOR() {
         return VALIDATOR;

@@ -8,8 +8,9 @@ import com.mjc.school.service.dto.NewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Mapper
@@ -17,21 +18,30 @@ public interface ModelMapper {
 
     List<NewsDtoResponse> newsModelListToDtoList(List<NewsModel> newsModelList);
 
+
+    @Mapping(target = "authorId", source = "author.id")
+    @Mapping(target = "createDate", expression = "java(formatDate(newsModel.getCreateDate()))")
+    @Mapping(target = "lastUpdateDate", expression = "java(formatDate(newsModel.getLastUpdateDate()))")
     NewsDtoResponse newsModelToDto(NewsModel newsModel);
 
-    @Mappings({
-            @Mapping(target = "createDate", ignore = true),
-            @Mapping(target = "lastUpdateDate", ignore = true)
-    })
+    @Mapping(target = "createDate", ignore = true)
+    @Mapping(target = "lastUpdateDate", ignore = true)
+    @Mapping(target = "author.id", source = "authorId")
     NewsModel newsDtoToModel(NewsDtoRequest newsModelRequest);
 
     List<AuthorDtoResponse> authorModelListToDtoList(List<AuthorModel> authorModelList);
 
+    @Mapping(target = "createDate", expression = "java(formatDate(authorModel.getCreateDate()))")
+    @Mapping(target = "lastUpdateDate", expression = "java(formatDate(authorModel.getLastUpdateDate()))")
     AuthorDtoResponse authorModelToDto(AuthorModel authorModel);
 
-    @Mappings({
-            @Mapping(target = "createDate", ignore = true),
-            @Mapping(target = "lastUpdateDate", ignore = true)
-    })
+    @Mapping(target = "createDate", ignore = true)
+    @Mapping(target = "lastUpdateDate", ignore = true)
+    @Mapping(target = "news", ignore = true)
     AuthorModel authorDtoToModel(AuthorDtoRequest authorModelRequest);
+
+    default String formatDate(LocalDateTime dateTime) {
+        return dateTime != null ? dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")) : null;
+    }
+
 }

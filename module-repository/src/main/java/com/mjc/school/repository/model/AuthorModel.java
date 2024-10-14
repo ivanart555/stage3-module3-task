@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "AUTHOR")
 public class AuthorModel implements BaseEntity<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     @CreatedDate
