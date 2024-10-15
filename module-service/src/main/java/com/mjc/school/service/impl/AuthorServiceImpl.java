@@ -25,12 +25,12 @@ import static com.mjc.school.service.exception.ServiceErrorCode.AUTHOR_ID_DOES_N
 public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDtoResponse, Long> {
     private static final Logger LOGGER = Logger.getLogger(AuthorServiceImpl.class.getName());
     private final BaseRepository<AuthorModel, Long> authorRepository;
-    private final ValidatorInstance Validator;
+    private final ValidatorInstance validator;
     private final ModelMapper mapper = Mappers.getMapper(ModelMapper.class);
 
     public AuthorServiceImpl(BaseRepository<AuthorModel, Long> authorRepository, ValidatorInstance validator) {
         this.authorRepository = authorRepository;
-        Validator = validator;
+        this.validator = validator;
     }
 
     @Override
@@ -58,9 +58,14 @@ public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDt
     @Override
     public AuthorDtoResponse update(AuthorDtoRequest updateRequest) {
         validate(updateRequest);
-        if (authorRepository.existById(updateRequest.id())) {
-            AuthorModel author = mapper.authorDtoToModel(updateRequest);
-            AuthorModel updatedAuthor = authorRepository.update(author);
+
+        Optional<AuthorModel> existingAuthorOptional = authorRepository.readById(updateRequest.id());
+        if (existingAuthorOptional.isPresent()) {
+            AuthorModel existingAuthor = existingAuthorOptional.get();
+
+            existingAuthor.setName(updateRequest.name());
+
+            AuthorModel updatedAuthor = authorRepository.update(existingAuthor);
             return mapper.authorModelToDto(updatedAuthor);
         } else {
             throw new ServiceException(
@@ -78,7 +83,7 @@ public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDt
     }
 
     private void validate(AuthorDtoRequest authorDto) throws ValidationException {
-        Set<ConstraintViolation<AuthorDtoRequest>> violations = Validator.getVALIDATOR().validate(authorDto);
+        Set<ConstraintViolation<AuthorDtoRequest>> violations = validator.getVALIDATOR().validate(authorDto);
         if (!violations.isEmpty()) {
             for (ConstraintViolation<AuthorDtoRequest> violation : violations) {
                 LOGGER.warning("Author " + violation.getPropertyPath() + ": " + violation.getMessage());

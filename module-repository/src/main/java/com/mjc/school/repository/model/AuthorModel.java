@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -26,6 +25,4 @@ public class AuthorModel implements BaseEntity<Long> {
     private LocalDateTime createDate;
     @LastModifiedDate
     private LocalDateTime lastUpdateDate;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
-    private List<NewsModel> news;
 }

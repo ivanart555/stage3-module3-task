@@ -15,13 +15,12 @@ import jakarta.validation.ValidationException;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static com.mjc.school.service.exception.ServiceErrorCode.AUTHOR_ID_DOES_NOT_EXIST;
 import static com.mjc.school.service.exception.ServiceErrorCode.NEWS_ID_DOES_NOT_EXIST;
 
 @Service
@@ -57,15 +56,7 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
     public NewsDtoResponse create(NewsDtoRequest createRequest) {
         validate(createRequest);
 
-        AuthorModel author = authorRepository.readById(createRequest.authorId())
-                .orElseThrow(() -> new ServiceException("Author not found"));
-
         NewsModel news = mapper.newsDtoToModel(createRequest);
-
-        news.setAuthor(author);
-        LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        news.setCreateDate(date);
-        news.setLastUpdateDate(date);
         NewsModel createdNews = newsRepository.create(news);
         return mapper.newsModelToDto(createdNews);
     }
@@ -73,16 +64,21 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
     @Override
     public NewsDtoResponse update(NewsDtoRequest updateRequest) {
         validate(updateRequest);
-        if (newsRepository.existById(updateRequest.id())) {
-            NewsModel news = mapper.newsDtoToModel(updateRequest);
-            LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-            news.setLastUpdateDate(date);
-            NewsModel updatedNews = newsRepository.update(news);
-            return mapper.newsModelToDto(updatedNews);
-        } else {
-            throw new ServiceException(
-                    String.format(NEWS_ID_DOES_NOT_EXIST.getMessage(), updateRequest.id()));
-        }
+
+        NewsModel existingNews = newsRepository.readById(updateRequest.id()).orElseThrow(
+                () -> new ServiceException(String.format(NEWS_ID_DOES_NOT_EXIST.getMessage(), updateRequest.id())));
+
+        existingNews.setTitle(updateRequest.title());
+        existingNews.setContent(updateRequest.content());
+
+        AuthorModel existingAuthor = authorRepository.readById(updateRequest.authorId()).orElseThrow(
+                () -> new ServiceException(String.format(AUTHOR_ID_DOES_NOT_EXIST.getMessage(), updateRequest.authorId())));
+
+        existingNews.setAuthor(existingAuthor);
+
+        NewsModel updatedNews = newsRepository.update(existingNews);
+        return mapper.newsModelToDto(updatedNews);
+
     }
 
     @Override
