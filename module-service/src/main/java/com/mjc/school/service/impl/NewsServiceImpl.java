@@ -16,7 +16,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -45,11 +44,10 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
 
     @Override
     public NewsDtoResponse readById(Long newsId) {
-        Optional<NewsModel> foundNews = newsRepository.readById(newsId);
-        if (foundNews.isEmpty()) {
-            throw new ServiceException(String.format(NEWS_ID_DOES_NOT_EXIST.getMessage(), newsId));
-        }
-        return mapper.newsModelToDto(foundNews.get());
+        NewsModel foundNews = newsRepository.readById(newsId).orElseThrow(
+                () -> new ServiceException(String.format(NEWS_ID_DOES_NOT_EXIST.getMessage(), newsId)));
+
+        return mapper.newsModelToDto(foundNews);
     }
 
     @Override
@@ -58,6 +56,7 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
 
         NewsModel news = mapper.newsDtoToModel(createRequest);
         NewsModel createdNews = newsRepository.create(news);
+
         return mapper.newsModelToDto(createdNews);
     }
 
@@ -78,7 +77,6 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
 
         NewsModel updatedNews = newsRepository.update(existingNews);
         return mapper.newsModelToDto(updatedNews);
-
     }
 
     @Override
