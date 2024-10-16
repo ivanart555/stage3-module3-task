@@ -15,7 +15,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -40,18 +39,19 @@ public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDt
 
     @Override
     public AuthorDtoResponse readById(Long authorId) {
-        Optional<AuthorModel> foundAuthor = authorRepository.readById(authorId);
-        if (foundAuthor.isEmpty()) {
-            throw new ServiceException(String.format(AUTHOR_ID_DOES_NOT_EXIST.getMessage(), authorId));
-        }
-        return mapper.authorModelToDto(foundAuthor.get());
+        AuthorModel foundAuthor = authorRepository.readById(authorId).orElseThrow(
+                () -> new ServiceException(String.format(AUTHOR_ID_DOES_NOT_EXIST.getMessage(), authorId)));
+
+        return mapper.authorModelToDto(foundAuthor);
     }
 
     @Override
     public AuthorDtoResponse create(AuthorDtoRequest createRequest) {
         validate(createRequest);
+
         AuthorModel author = mapper.authorDtoToModel(createRequest);
         AuthorModel createdAuthor = authorRepository.create(author);
+
         return mapper.authorModelToDto(createdAuthor);
     }
 
@@ -59,18 +59,14 @@ public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDt
     public AuthorDtoResponse update(AuthorDtoRequest updateRequest) {
         validate(updateRequest);
 
-        Optional<AuthorModel> existingAuthorOptional = authorRepository.readById(updateRequest.id());
-        if (existingAuthorOptional.isPresent()) {
-            AuthorModel existingAuthor = existingAuthorOptional.get();
+        AuthorModel existingAuthor = authorRepository.readById(updateRequest.id()).orElseThrow(
+                () -> new ServiceException(String.format(AUTHOR_ID_DOES_NOT_EXIST.getMessage(), updateRequest.id())));
 
-            existingAuthor.setName(updateRequest.name());
+        existingAuthor.setName(updateRequest.name());
 
-            AuthorModel updatedAuthor = authorRepository.update(existingAuthor);
-            return mapper.authorModelToDto(updatedAuthor);
-        } else {
-            throw new ServiceException(
-                    String.format(AUTHOR_ID_DOES_NOT_EXIST.getMessage(), updateRequest.id()));
-        }
+        AuthorModel updatedAuthor = authorRepository.update(existingAuthor);
+
+        return mapper.authorModelToDto(updatedAuthor);
     }
 
     @Override
