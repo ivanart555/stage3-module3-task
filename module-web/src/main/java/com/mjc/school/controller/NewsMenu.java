@@ -3,12 +3,16 @@ package com.mjc.school.controller;
 import com.mjc.school.controller.command.Command;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 @Component
 public class NewsMenu {
     private final Command[] commands;
 
     public NewsMenu(Command[] commands) {
         this.commands = commands;
+        Arrays.sort(this.commands, Comparator.comparing(Command::getDescription));
     }
 
     public void displayMenu() {

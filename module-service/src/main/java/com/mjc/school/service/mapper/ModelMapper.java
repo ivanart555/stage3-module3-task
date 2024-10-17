@@ -2,10 +2,8 @@ package com.mjc.school.service.mapper;
 
 import com.mjc.school.repository.model.AuthorModel;
 import com.mjc.school.repository.model.NewsModel;
-import com.mjc.school.service.dto.AuthorDtoRequest;
-import com.mjc.school.service.dto.AuthorDtoResponse;
-import com.mjc.school.service.dto.NewsDtoRequest;
-import com.mjc.school.service.dto.NewsDtoResponse;
+import com.mjc.school.repository.model.TagModel;
+import com.mjc.school.service.dto.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -27,7 +25,7 @@ public interface ModelMapper {
     @Mapping(target = "createDate", ignore = true)
     @Mapping(target = "lastUpdateDate", ignore = true)
     @Mapping(target = "author.id", source = "authorId")
-    NewsModel newsDtoToModel(NewsDtoRequest newsModelRequest);
+    NewsModel newsDtoToModel(NewsDtoRequest newsDtoRequest);
 
     List<AuthorDtoResponse> authorModelListToDtoList(List<AuthorModel> authorModelList);
 
@@ -37,7 +35,13 @@ public interface ModelMapper {
 
     @Mapping(target = "createDate", ignore = true)
     @Mapping(target = "lastUpdateDate", ignore = true)
-    AuthorModel authorDtoToModel(AuthorDtoRequest authorModelRequest);
+    AuthorModel authorDtoToModel(AuthorDtoRequest authorDtoRequest);
+
+    List<TagDto> tagModelListToDtoList(List<TagModel> tagModelList);
+
+    TagModel tagDtoToModel(TagDto tagDto);
+
+    TagDto tagModelToDto(TagModel tagModel);
 
     default String formatDate(LocalDateTime dateTime) {
         return dateTime != null ? dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")) : null;

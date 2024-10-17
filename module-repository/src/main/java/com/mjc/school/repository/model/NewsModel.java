@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -29,4 +30,10 @@ public class NewsModel implements BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "AUTHOR_ID")
     private AuthorModel author;
+    @ManyToMany()
+    @JoinTable(
+            name = "news_tag",
+            joinColumns = @JoinColumn(name = "news_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<TagModel> tags;
 }
