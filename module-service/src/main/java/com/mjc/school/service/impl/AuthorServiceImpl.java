@@ -59,12 +59,8 @@ public class AuthorServiceImpl implements BaseService<AuthorDtoRequest, AuthorDt
     public AuthorDtoResponse update(AuthorDtoRequest updateRequest) {
         validate(updateRequest);
 
-        AuthorModel existingAuthor = authorRepository.readById(updateRequest.id()).orElseThrow(
-                () -> new ServiceException(String.format(AUTHOR_ID_DOES_NOT_EXIST.getMessage(), updateRequest.id())));
-
-        existingAuthor.setName(updateRequest.name());
-
-        AuthorModel updatedAuthor = authorRepository.update(existingAuthor);
+        AuthorModel author = mapper.authorDtoToModel(updateRequest);
+        AuthorModel updatedAuthor = authorRepository.update(author);
 
         return mapper.authorModelToDto(updatedAuthor);
     }

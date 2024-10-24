@@ -78,12 +78,11 @@ class AuthorServiceImplTest {
     @Test
     void whenUpdateAuthor_thenReturnUpdatedAuthorDto() {
         AuthorDtoRequest updateRequest = new AuthorDtoRequest(1L, "Alex Peterson");
-        AuthorModel authorModel = new AuthorModel();
-        authorModel.setId(1L);
-        authorModel.setName("John Doe");
+        AuthorModel authorModel = new AuthorModel(1L, "John", null, null);
 
+        AuthorModel updatedAuthorModel = new AuthorModel(1L, "Alex Peterson", null, null);
         when(authorRepository.readById(1L)).thenReturn(Optional.of(authorModel));
-        when(authorRepository.update(any(AuthorModel.class))).thenReturn(authorModel);
+        when(authorRepository.update(any(AuthorModel.class))).thenReturn(updatedAuthorModel);
 
         AuthorDtoResponse response = authorService.update(updateRequest);
 
