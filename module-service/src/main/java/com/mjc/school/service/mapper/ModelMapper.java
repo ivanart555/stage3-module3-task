@@ -39,6 +39,7 @@ public interface ModelMapper {
 
     List<TagDto> tagModelListToDtoList(List<TagModel> tagModelList);
 
+    @Mapping(target = "news", ignore = true)
     TagModel tagDtoToModel(TagDto tagDto);
 
     TagDto tagModelToDto(TagModel tagModel);

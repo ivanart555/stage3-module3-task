@@ -5,7 +5,11 @@ import com.mjc.school.controller.ConsoleReader;
 import com.mjc.school.controller.command.Command;
 import com.mjc.school.service.dto.NewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
+import com.mjc.school.service.dto.TagDto;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class CreateNewsCommand implements Command {
@@ -20,6 +24,7 @@ public class CreateNewsCommand implements Command {
         String title;
         String content;
         Long authorId;
+        Set<Long> tagIds;
 
         System.out.println("Please enter the news title:");
         title = ConsoleReader.readStringFromUser();
@@ -30,7 +35,14 @@ public class CreateNewsCommand implements Command {
         System.out.println("Please enter the author's ID:");
         authorId = ConsoleReader.readNumberFromUser();
 
-        NewsDtoRequest newsDto = new NewsDtoRequest(null, title, content, authorId);
+        System.out.println("Please enter the tag IDs if needed (separated by coma):");
+        tagIds = ConsoleReader.readDistinctNumbersFromUser();
+
+        Set<TagDto> tagDtos = tagIds.stream()
+                .map(tagId -> new TagDto(tagId, null))
+                .collect(Collectors.toSet());
+
+        NewsDtoRequest newsDto = new NewsDtoRequest(null, title, content, authorId, tagDtos);
 
         System.out.println(newsController.create(newsDto));
     }

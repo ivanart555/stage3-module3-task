@@ -61,7 +61,7 @@ class NewsServiceImplTest {
 
     @Test
     void whenCreateNews_thenReturnCreatedNewsDto() {
-        NewsDtoRequest createRequest = new NewsDtoRequest(1L,"Title", "Content", 1L);
+        NewsDtoRequest createRequest = new NewsDtoRequest(1L,"Title", "Content", 1L, null);
         NewsModel newsModel = new NewsModel();
         newsModel.setId(1L);
         newsModel.setTitle("Title");
@@ -76,7 +76,7 @@ class NewsServiceImplTest {
 
     @Test
     void whenUpdateNews_thenReturnUpdatedNewsDto() {
-        NewsDtoRequest updateRequest = new NewsDtoRequest(1L, "Updated Title", "Updated Content", 1L);
+        NewsDtoRequest updateRequest = new NewsDtoRequest(1L, "Updated Title", "Updated Content", 1L, null);
         NewsModel newsModel = new NewsModel();
         newsModel.setId(1L);
         newsModel.setTitle("Title");
