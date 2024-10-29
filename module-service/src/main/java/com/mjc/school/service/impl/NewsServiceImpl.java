@@ -2,7 +2,6 @@ package com.mjc.school.service.impl;
 
 
 import com.mjc.school.repository.BaseRepository;
-import com.mjc.school.repository.model.AuthorModel;
 import com.mjc.school.repository.model.NewsModel;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.NewsDtoRequest;
@@ -19,21 +18,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static com.mjc.school.service.exception.ServiceErrorCode.AUTHOR_ID_DOES_NOT_EXIST;
 import static com.mjc.school.service.exception.ServiceErrorCode.NEWS_ID_DOES_NOT_EXIST;
 
 @Service
 public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoResponse, Long> {
     private static final Logger LOGGER = Logger.getLogger(NewsServiceImpl.class.getName());
     private final BaseRepository<NewsModel, Long> newsRepository;
-    private final BaseRepository<AuthorModel, Long> authorRepository;
     private final ValidatorInstance validator;
     private final ModelMapper mapper = Mappers.getMapper(ModelMapper.class);
 
     public NewsServiceImpl(BaseRepository<NewsModel, Long> newsRepository,
-                           BaseRepository<AuthorModel, Long> authorRepository, ValidatorInstance validator) {
+                           ValidatorInstance validator) {
         this.newsRepository = newsRepository;
-        this.authorRepository = authorRepository;
         this.validator = validator;
     }
 
@@ -64,18 +60,10 @@ public class NewsServiceImpl implements BaseService<NewsDtoRequest, NewsDtoRespo
     public NewsDtoResponse update(NewsDtoRequest updateRequest) {
         validate(updateRequest);
 
-        NewsModel existingNews = newsRepository.readById(updateRequest.id()).orElseThrow(
-                () -> new ServiceException(String.format(NEWS_ID_DOES_NOT_EXIST.getMessage(), updateRequest.id())));
+        NewsModel newsToUpdate = mapper.newsDtoToModel(updateRequest);
 
-        existingNews.setTitle(updateRequest.title());
-        existingNews.setContent(updateRequest.content());
+        NewsModel updatedNews = newsRepository.update(newsToUpdate);
 
-        AuthorModel existingAuthor = authorRepository.readById(updateRequest.authorId()).orElseThrow(
-                () -> new ServiceException(String.format(AUTHOR_ID_DOES_NOT_EXIST.getMessage(), updateRequest.authorId())));
-
-        existingNews.setAuthor(existingAuthor);
-
-        NewsModel updatedNews = newsRepository.update(existingNews);
         return mapper.newsModelToDto(updatedNews);
     }
 

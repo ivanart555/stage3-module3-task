@@ -34,7 +34,7 @@ class NewsServiceImplTest {
         when(validatorInstanceMock.getVALIDATOR()).thenReturn(validatorMock);
         when(validatorMock.validate(any())).thenReturn(Set.of());
 
-        newsService = new NewsServiceImpl(newsRepository, authorRepository, validatorInstanceMock);
+        newsService = new NewsServiceImpl(newsRepository, validatorInstanceMock);
     }
 
     @Test
@@ -61,7 +61,7 @@ class NewsServiceImplTest {
 
     @Test
     void whenCreateNews_thenReturnCreatedNewsDto() {
-        NewsDtoRequest createRequest = new NewsDtoRequest(1L,"Title", "Content", 1L, null);
+        NewsDtoRequest createRequest = new NewsDtoRequest(1L, "Title", "Content", 1L, null);
         NewsModel newsModel = new NewsModel();
         newsModel.setId(1L);
         newsModel.setTitle("Title");
