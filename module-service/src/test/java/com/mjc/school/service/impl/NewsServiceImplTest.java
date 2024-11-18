@@ -79,7 +79,7 @@ class NewsServiceImplTest {
         NewsDtoRequest updateRequest = new NewsDtoRequest(1L, "Updated Title", "Updated Content", 1L, null);
         NewsModel newsModel = new NewsModel();
         newsModel.setId(1L);
-        newsModel.setTitle("Title");
+        newsModel.setTitle("Updated Title");
 
         when(newsRepository.readById(1L)).thenReturn(Optional.of(newsModel));
         when(authorRepository.readById(1L)).thenReturn(Optional.of(new AuthorModel()));

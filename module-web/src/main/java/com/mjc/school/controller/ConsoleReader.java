@@ -3,6 +3,7 @@ package com.mjc.school.controller;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +20,11 @@ public class ConsoleReader {
     }
 
     public static Set<Long> readDistinctNumbersFromUser() {
-        String input = SCANNER.nextLine();
+        String input = SCANNER.nextLine().trim();
+
+        if (input.isEmpty()) {
+            return Collections.emptySet();
+        }
 
         return Arrays.stream(input.split(","))
                 .map(String::trim)

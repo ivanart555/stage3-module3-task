@@ -25,4 +25,8 @@ public class AuthorModel implements BaseEntity<Long> {
     private LocalDateTime createDate;
     @LastModifiedDate
     private LocalDateTime lastUpdateDate;
+
+    public AuthorModel(Long id) {
+        this.id = id;
+    }
 }

@@ -27,7 +27,7 @@ public class NewsModel implements BaseEntity<Long> {
     private LocalDateTime createDate;
     @LastModifiedDate
     private LocalDateTime lastUpdateDate;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID")
     private AuthorModel author;
     @ManyToMany()

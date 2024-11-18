@@ -24,7 +24,8 @@ public interface ModelMapper {
 
     @Mapping(target = "createDate", ignore = true)
     @Mapping(target = "lastUpdateDate", ignore = true)
-    @Mapping(target = "author.id", source = "authorId")
+    @Mapping(target = "author", expression = "java(new AuthorModel(newsDtoRequest.authorId()))")
+    @Mapping(target = "tags", source = "tags")
     NewsModel newsDtoToModel(NewsDtoRequest newsDtoRequest);
 
     List<AuthorDtoResponse> authorModelListToDtoList(List<AuthorModel> authorModelList);
@@ -47,5 +48,4 @@ public interface ModelMapper {
     default String formatDate(LocalDateTime dateTime) {
         return dateTime != null ? dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")) : null;
     }
-
 }
