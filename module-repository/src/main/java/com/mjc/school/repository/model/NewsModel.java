@@ -2,6 +2,7 @@ package com.mjc.school.repository.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -30,6 +31,7 @@ public class NewsModel implements BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID")
     private AuthorModel author;
+    @EqualsAndHashCode.Exclude
     @ManyToMany()
     @JoinTable(
             name = "news_tag",

@@ -36,6 +36,7 @@ public interface ModelMapper {
 
     @Mapping(target = "createDate", ignore = true)
     @Mapping(target = "lastUpdateDate", ignore = true)
+    @Mapping(target = "news", ignore = true)
     AuthorModel authorDtoToModel(AuthorDtoRequest authorDtoRequest);
 
     List<TagDto> tagModelListToDtoList(List<TagModel> tagModelList);
